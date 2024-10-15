@@ -43,5 +43,18 @@ public class ScheduleService {
     public void deleteById(Long id) {
         scheduleRepository.deleteById(id);
     }
+    public Schedule updateSchedule(Long id, ScheduleRequestDTO scheduleRequestDTO) {
+        // 기존 스케줄 찾기
+        Schedule existingSchedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Schedule not found with id " + id));
+
+        // 수정할 필드 업데이트
+        existingSchedule.setTitle(scheduleRequestDTO.getTitle());
+        existingSchedule.setContent(scheduleRequestDTO.getContent());
+        // 추가적으로 수정할 필드가 있으면 계속 설정
+
+        // 수정된 스케줄 저장
+        return scheduleRepository.save(existingSchedule);
+    }
 }
 

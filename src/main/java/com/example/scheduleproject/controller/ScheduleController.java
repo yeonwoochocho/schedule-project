@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -46,6 +47,18 @@ public class ScheduleController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         scheduleService.deleteById(id);
+    }
+
+    //5. 일정 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<Schedule> updateSchedule(
+            @PathVariable Long id,
+            @Valid @RequestBody ScheduleRequestDTO scheduleRequestDTO) {
+
+        // Schedule 수정 요청
+        Schedule updatedSchedule = scheduleService.updateSchedule(id, scheduleRequestDTO);
+
+        return ResponseEntity.ok(updatedSchedule);
     }
 }
 
