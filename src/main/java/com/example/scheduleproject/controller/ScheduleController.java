@@ -1,8 +1,12 @@
 package com.example.scheduleproject.controller;
 
+import com.example.scheduleproject.dto.CommentRequestDTO;
 import com.example.scheduleproject.dto.ScheduleRequestDTO;
+import com.example.scheduleproject.entity.Comment;
 import com.example.scheduleproject.entity.Schedule;
 import com.example.scheduleproject.service.ScheduleService;
+import com.example.scheduleproject.service.CommentService;
+
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,6 +63,9 @@ public class ScheduleController {
         Schedule updatedSchedule = scheduleService.updateSchedule(id, scheduleRequestDTO);
 
         return ResponseEntity.ok(updatedSchedule);
+
     }
+
+
 }
 

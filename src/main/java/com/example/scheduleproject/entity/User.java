@@ -36,11 +36,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();
 
-    // **기본 생성자 (필수)**
+    // 기본 생성자 (필수)
     public User() {
     }
 
-    // **모든 필드를 초기화하는 생성자**
+    // 모든 필드를 초기화하는 생성자
     public User(String username, String email) {
         this.username = username;
         this.email = email;
