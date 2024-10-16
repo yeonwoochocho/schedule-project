@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,9 +23,19 @@ public class ScheduleService {
 
     @Transactional
     public Schedule save(ScheduleRequestDTO requestDTO) {
+        // createdDate와 modifiedDate가 없을 경우 현재 시간으로 설정
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime createdDate = requestDTO.getCreatedDate() != null ? requestDTO.getCreatedDate() : now;
+        LocalDateTime modifiedDate = requestDTO.getModifiedDate() != null ? requestDTO.getModifiedDate() : now;
+
         // DTO를 엔티티로 변환 후 저장
-        Schedule schedule = new Schedule(requestDTO.getTitle(), requestDTO.getContent(), requestDTO.getAuthor());
-        return scheduleRepository.save(schedule);
+        Schedule schedule = new Schedule(
+                requestDTO.getTitle(),
+                requestDTO.getContent(),
+                requestDTO.getAuthor(),
+                createdDate,
+                modifiedDate
+        );return scheduleRepository.save(schedule);
     }
 
     public List<Schedule> findAll() {
