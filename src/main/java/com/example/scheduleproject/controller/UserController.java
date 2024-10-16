@@ -1,6 +1,7 @@
 package com.example.scheduleproject.controller;
 
 import com.example.scheduleproject.dto.UserRequestDTO;
+import com.example.scheduleproject.dto.UserResponseDTO;
 import com.example.scheduleproject.entity.User;
 import com.example.scheduleproject.service.UserService;
 import jakarta.validation.Valid;
@@ -17,10 +18,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    //1. 유저 생성
-    @PostMapping
-    public User createUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+    //1. 유저 생성 (회원 가입)
+    @PostMapping("/signup")
+    public UserResponseDTO signup(@RequestBody UserRequestDTO userRequestDTO) {
         return userService.createUser(userRequestDTO);
+    }
+
+
+    // 로그인
+    @PostMapping("/login")
+    public String login(@RequestParam String username, @RequestParam String password) {
+        return userService.login(username, password);
     }
 
     //2. 유저 전체 조회

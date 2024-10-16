@@ -23,6 +23,7 @@ public class UserRequestDTO {
     @Email(message = "유효한 이메일 형식이 아닙니다.")
     private String email;
 
+    private String password;
     @PastOrPresent(message = "작성일은 미래가 될 수 없습니다.")
     private LocalDateTime createdDate = LocalDateTime.now();
 

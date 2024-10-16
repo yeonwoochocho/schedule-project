@@ -1,6 +1,7 @@
 package com.example.scheduleproject.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -21,9 +22,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @NotBlank(message = "비밀번호는 비어있을 수 없습니다.")
+    private String password; // 암호화된 비밀번호
+
+    @Enumerated(EnumType.STRING) // 역할을 문자열로 저장
+    private UserRoleEnum role;
 
     @CreatedDate
     private LocalDateTime createdDate;
@@ -40,13 +49,11 @@ public class User {
     }
 
     // 모든 필드를 초기화하는 생성자
-    public User(String username, String email) {
+    public User(String username, String email,  String password) {
         this.username = username;
         this.email = email;
-        this.createdDate = LocalDateTime.now();
-        this.modifiedDate = LocalDateTime.now();
+        this.password = password;
+
     }
-    public String getUsername() { // 사용자 이름을 반환하는 메서드
-        return username;
-    }
+
 }
