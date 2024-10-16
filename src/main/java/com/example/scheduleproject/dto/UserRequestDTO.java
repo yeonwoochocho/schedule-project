@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class UserRequestDTO {
 
     @NotBlank(message = "유저명은 비어있을 수 없습니다.")
-    @Size(max = 4, message = "유저명은 최대 4글자까지 가능합니다.")
+    @Size(max = 10, message = "유저명은 최대 10글자까지 가능합니다.")
     private String username;
     @NotBlank(message = "이메일은 비어있을 수 없습니다.")
     @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")

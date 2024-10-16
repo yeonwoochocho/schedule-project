@@ -31,7 +31,16 @@ public class Schedule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User author; // User 타입으로 정의
+    private User author; // User 고유 식별자
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "schedule_users",
+            joinColumns = @JoinColumn(name = "schedule_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> responsibleUsers = new ArrayList<>(); // 일정 담당 유저들
+
 
     // 엔티티가 생성될 때 자동으로 현재 시간 설정
     @Column(updatable = false)
