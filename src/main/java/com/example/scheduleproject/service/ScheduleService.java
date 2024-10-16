@@ -1,8 +1,13 @@
 package com.example.scheduleproject.service;
+
 import com.example.scheduleproject.dto.ScheduleRequestDTO;
+import com.example.scheduleproject.dto.ScheduleResponseDTO;
 import com.example.scheduleproject.entity.Schedule;
+import com.example.scheduleproject.entity.User;
 import com.example.scheduleproject.exception.ResourceNotFoundException;
 import com.example.scheduleproject.repository.ScheduleRepository;
+import com.example.scheduleproject.repository.CommentRepository;
+
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,26 +21,30 @@ import java.util.List;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final CommentRepository commentRepository;
 
-    public ScheduleService(ScheduleRepository scheduleRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository, CommentRepository commentRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Transactional
     public Schedule save(ScheduleRequestDTO requestDTO) {
-        // createdDate와 modifiedDate가 없을 경우 현재 시간으로 설정
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime createdDate = requestDTO.getCreatedDate() != null ? requestDTO.getCreatedDate() : now;
         LocalDateTime modifiedDate = requestDTO.getModifiedDate() != null ? requestDTO.getModifiedDate() : now;
 
-        // DTO를 엔티티로 변환 후 저장
+        User author = new User();
+        author.setUsername(requestDTO.getAuthor()); // 작성자 설정
+
         Schedule schedule = new Schedule(
                 requestDTO.getTitle(),
                 requestDTO.getContent(),
-                requestDTO.getAuthor(),
+                author, // User 객체로 전달
                 createdDate,
                 modifiedDate
-        );return scheduleRepository.save(schedule);
+        );
+        return scheduleRepository.save(schedule);
     }
 
     public List<Schedule> findAll() {
@@ -55,18 +64,30 @@ public class ScheduleService {
     public void deleteById(Long id) {
         scheduleRepository.deleteById(id);
     }
+
     public Schedule updateSchedule(Long id, ScheduleRequestDTO scheduleRequestDTO) {
-        // 기존 스케줄 찾기
         Schedule existingSchedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Schedule not found with id " + id));
 
-        // 수정할 필드 업데이트
         existingSchedule.setTitle(scheduleRequestDTO.getTitle());
         existingSchedule.setContent(scheduleRequestDTO.getContent());
-        // 추가적으로 수정할 필드가 있으면 계속 설정
 
-        // 수정된 스케줄 저장
         return scheduleRepository.save(existingSchedule);
     }
-}
 
+    public Page<ScheduleResponseDTO> findAllWithPaging(Pageable pageable) {
+        return scheduleRepository.findAll(pageable)
+                .map(schedule -> {
+                    Long commentCount = commentRepository.countByScheduleId(schedule.getId());
+                    return new ScheduleResponseDTO(
+                            schedule.getId(),
+                            schedule.getTitle(),
+                            schedule.getContent(),
+                            commentCount,
+                            schedule.getCreatedDate(),
+                            schedule.getModifiedDate(),
+                            schedule.getAuthor() != null ? schedule.getAuthor().getUsername() : "작성자 없음" // null 체크
+                    );
+                });
+    }
+}

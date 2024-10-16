@@ -9,9 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -24,6 +22,7 @@ public class User {
     private Long id;
 
     private String username;
+
     private String email;
 
     @CreatedDate
@@ -33,7 +32,7 @@ public class User {
     private LocalDateTime modifiedDate;
 
     // 일정과 N:1 연관관계 설정 (유저는 여러 일정 작성 가능)
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();
 
     // 기본 생성자 (필수)
@@ -46,5 +45,8 @@ public class User {
         this.email = email;
         this.createdDate = LocalDateTime.now();
         this.modifiedDate = LocalDateTime.now();
+    }
+    public String getUsername() { // 사용자 이름을 반환하는 메서드
+        return username;
     }
 }
