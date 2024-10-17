@@ -46,12 +46,12 @@ public class JwtUtil {
         Date now = new Date();
 
         return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(username)
-                        .claim(AUTHORIZATION_KEY, role)
-                        .setExpiration(new Date(now.getTime() + TOKEN_TIME))
-                        .setIssuedAt(now)
-                        .signWith(key, signatureAlgorithm)
+                Jwts.builder() // 암호화
+                        .setSubject(username) // 사용자 식별자값(ID)
+                        .claim(AUTHORIZATION_KEY, role) // 사용자 권한 추가
+                        .setExpiration(new Date(now.getTime() + TOKEN_TIME)) // 현재시간 + 만료 시간
+                        .setIssuedAt(now) // 발급일
+                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
     }
 
@@ -116,4 +116,13 @@ public class JwtUtil {
         }
         return null;
     }
+    public String extractUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
 }

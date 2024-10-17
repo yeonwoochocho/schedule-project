@@ -17,10 +17,11 @@ import lombok.NoArgsConstructor;
 public class ScheduleRequestDTO {
 
     @NotBlank(message = "할일 제목은 비어있을 수 없습니다.")
-    @Size(max = 10, message = "할일 제목은 최대 10글자까지 가능합니다.")
+    @Size(max = 20, message = "할일 제목은 최대 20글자까지 가능합니다.")
     private String title;
 
     @NotBlank(message = "할일 내용은 비어있을 수 없습니다.")
+    @Size(max = 500, message = "내용은 최대 500글자까지 가능합니다.")
     private String content;
 
     @NotBlank(message = "작성자명은 비어있을 수 없습니다.")

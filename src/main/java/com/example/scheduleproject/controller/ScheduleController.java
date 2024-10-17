@@ -4,6 +4,12 @@ import com.example.scheduleproject.dto.CommentRequestDTO;
 import com.example.scheduleproject.dto.ScheduleRequestDTO;
 import com.example.scheduleproject.entity.Comment;
 import com.example.scheduleproject.entity.Schedule;
+import com.example.scheduleproject.entity.User;
+import com.example.scheduleproject.exception.CustomAccessDeniedException;
+import com.example.scheduleproject.exception.ResourceNotFoundException;
+import com.example.scheduleproject.jwt.JwtUtil;
+import com.example.scheduleproject.repository.ScheduleRepository;
+import com.example.scheduleproject.repository.UserRepository;
 import com.example.scheduleproject.service.ScheduleService;
 import com.example.scheduleproject.service.CommentService;
 
@@ -12,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -19,18 +26,46 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/schedules")
 public class ScheduleController {
+    private final UserRepository userRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final JwtUtil jwtUtil;
 
     private final ScheduleService scheduleService;
 
-    public ScheduleController(ScheduleService scheduleService) {
+    public ScheduleController(UserRepository userRepository,ScheduleRepository scheduleRepository, ScheduleService scheduleService, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.scheduleRepository = scheduleRepository;
         this.scheduleService = scheduleService;
+        this.jwtUtil = jwtUtil;
     }
 
     // 1. 일정 생성
     @PostMapping
-    public Schedule create(@Valid @RequestBody ScheduleRequestDTO requestDTO) {
-        return scheduleService.save(requestDTO);
+    public Schedule createSchedule( @RequestBody ScheduleRequestDTO scheduleRequestDTO,
+                                    @RequestHeader("Authorization") String token) {
+        // "Bearer " 부분 제거
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        } else {
+            throw new IllegalArgumentException("Invalid token format.");
+        }
+        String username = jwtUtil.extractUsername(token);
+
+        // User 객체 조회
+        User author = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+
+        // Schedule 객체 생성
+        Schedule schedule = new Schedule();
+        schedule.setTitle(scheduleRequestDTO.getTitle());
+        schedule.setContent(scheduleRequestDTO.getContent());
+        schedule.setAuthor(author); // User 객체 설정
+
+        // 일정 저장
+        return scheduleRepository.save(schedule);
     }
+
 
     // 2. 전체 일정 조회 (페이징 X)
     @GetMapping
@@ -49,10 +84,10 @@ public class ScheduleController {
 
     // 4. 일정 삭제
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        scheduleService.deleteById(id);
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+        scheduleService.deleteById(id, token);
+        return ResponseEntity.noContent().build();
     }
-
     //5. 일정 수정
     @PutMapping("/{id}")
     public ResponseEntity<Schedule> updateSchedule(
@@ -64,6 +99,12 @@ public class ScheduleController {
 
         return ResponseEntity.ok(updatedSchedule);
 
+    }
+
+    // 예외 처리 메서드
+    @ExceptionHandler(CustomAccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDenied(CustomAccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 
 
