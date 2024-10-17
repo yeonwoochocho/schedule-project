@@ -1,10 +1,12 @@
 package com.example.scheduleproject.controller;
 
+import com.example.scheduleproject.dto.LoginRequestDTO;
 import com.example.scheduleproject.dto.UserRequestDTO;
 import com.example.scheduleproject.dto.UserResponseDTO;
 import com.example.scheduleproject.entity.User;
 import com.example.scheduleproject.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -27,10 +29,10 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public String login(@RequestParam String username, @RequestParam String password) {
-        return userService.login(username, password);
+    public ResponseEntity<String> login(@RequestBody LoginRequestDTO loginRequestDTO) {
+        String token = userService.login(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
+        return ResponseEntity.ok(token);
     }
-
     //2. 유저 전체 조회
     @GetMapping
     public List<User> getAllUsers() {

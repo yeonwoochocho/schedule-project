@@ -7,6 +7,7 @@ import com.example.scheduleproject.entity.Schedule;
 import com.example.scheduleproject.entity.User;
 import com.example.scheduleproject.exception.CustomAccessDeniedException;
 import com.example.scheduleproject.exception.ResourceNotFoundException;
+import com.example.scheduleproject.exception.UnauthorizedException;
 import com.example.scheduleproject.jwt.JwtUtil;
 import com.example.scheduleproject.repository.ScheduleRepository;
 import com.example.scheduleproject.repository.UserRepository;
@@ -92,8 +93,14 @@ public class ScheduleController {
     @PutMapping("/{id}")
     public ResponseEntity<Schedule> updateSchedule(
             @PathVariable Long id,
-            @Valid @RequestBody ScheduleRequestDTO scheduleRequestDTO) {
+            @Valid @RequestBody ScheduleRequestDTO scheduleRequestDTO,
+            @RequestHeader("Authorization") String token) {
 
+        // 1. 토큰 파싱 후 권한 확인
+        String role = jwtUtil.extractUserRole(token);
+        if (!"ADMIN".equals(role)) {
+            throw new UnauthorizedException("수정 권한이 없습니다.");
+        }
         // Schedule 수정 요청
         Schedule updatedSchedule = scheduleService.updateSchedule(id, scheduleRequestDTO);
 

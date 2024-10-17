@@ -20,6 +20,8 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
+import static javax.crypto.Cipher.SECRET_KEY;
+
 @Component
 public class JwtUtil {
 
@@ -48,7 +50,7 @@ public class JwtUtil {
         return BEARER_PREFIX +
                 Jwts.builder() // 암호화
                         .setSubject(username) // 사용자 식별자값(ID)
-                        .claim(AUTHORIZATION_KEY, role) // 사용자 권한 추가
+                        .claim("role", role) // 권한 정보 추가 // 사용자 권한 추가
                         .setExpiration(new Date(now.getTime() + TOKEN_TIME)) // 현재시간 + 만료 시간
                         .setIssuedAt(now) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
@@ -98,6 +100,18 @@ public class JwtUtil {
     // JWT에서 사용자 정보 추출
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+    // JWT에서 권한 추출
+    public String extractUserRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    // JWT 파싱 (클레임 추출)
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(token.replace("Bearer ", "")) // "Bearer " 제거 후 파싱
+                .getBody();
     }
 
     // HttpServletRequest에서 Cookie에 저장된 JWT 가져오기
