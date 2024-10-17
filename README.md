@@ -7,15 +7,15 @@
 - spring boot 3.3.4
 - IntelliJ
 ## 필수 기능
-Lv 1. 일정 CRUD
-Lv 2. 댓글 CRUD 
-Lv 3. 일정 페이징 조회
-Lv 4. 유저 CRUD
-Lv 5. 다양한 예외처리 적용
+- Lv 1. 일정 CRUD
+- Lv 2. 댓글 CRUD 
+- Lv 3. 일정 페이징 조회
+- Lv 4. 유저 CRUD
+- Lv 5. 다양한 예외처리 적용
 ## 도전 기능
-Lv 1. 회원가입(JWT)
-Lv 2. 로그인(인증)
-Lv 3. 권한 확인(인가)
+- Lv 1. 회원가입(JWT)
+- Lv 2. 로그인(인증)
+- Lv 3. 권한 확인(인가)
 ## API 명세서
 <img width="707" alt="스크린샷 2024-10-17 오전 11 18 42" src="https://github.com/user-attachments/assets/6cdc6f2a-b764-4cd9-b417-1d1049e3034f">
 
