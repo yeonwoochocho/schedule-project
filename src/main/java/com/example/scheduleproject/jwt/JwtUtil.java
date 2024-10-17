@@ -99,7 +99,28 @@ public class JwtUtil {
 
     // JWT에서 사용자 정보 추출
     public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(key)  // 비밀키 사용
+                    .parseClaimsJws(token)      // 토큰 파싱
+                    .getBody();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JWT token", e);  // 유효하지 않은 토큰 예외 처리
+        }
+    }
+    // JWT에서 권한 추출
+    public String extractUserRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    // JWT 파싱 (클레임 추출)
+    private Claims extractAllClaims(String token) {
+        // Bearer 부분을 제거 후 파싱
+        String jwtToken = token.replace("Bearer ", "");
+        return Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(jwtToken) // "Bearer " 제거 후 파싱
+                .getBody();
     }
     // JWT에서 권한 추출
     public String extractUserRole(String token) {
@@ -132,7 +153,7 @@ public class JwtUtil {
     }
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+                .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()

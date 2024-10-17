@@ -86,6 +86,10 @@ public class ScheduleController {
     // 4. 일정 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+        // Bearer 접두어 제거
+        String jwtToken = token.replace("Bearer ", "").trim();
+
+        // 서비스에 토큰 전달하여 삭제 수행
         scheduleService.deleteById(id, token);
         return ResponseEntity.noContent().build();
     }
