@@ -25,7 +25,7 @@ public class ScheduleRequestDTO {
     private String content;
 
     @NotBlank(message = "작성자명은 비어있을 수 없습니다.")
-    @Size(max = 4, message = "작성자명은 최대 4글자까지 가능합니다.")
+    @Size(max = 10, message = "작성자명은 최대 10글자까지 가능합니다.")
     private String author;
 
     //@FutureOrPresent(message = "작성일은 현재 또는 미래 시점이어야 합니다.")
