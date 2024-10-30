@@ -89,6 +89,7 @@ public class ScheduleController {
     }
 
     // 4. 일정 삭제
+    //@PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         // Bearer 접두어 제거
@@ -99,11 +100,17 @@ public class ScheduleController {
             throw new IllegalArgumentException("Invalid JWT token.");
         }
 
+
         // 사용자 정보 확인
        String username = jwtUtil.extractUsername(jwtToken);
 
+        //  토큰 파싱 후 권한 확인
+        String role = jwtUtil.extractUserRole(jwtToken);
+        if (!"ADMIN".equals(role)) {
+            throw new UnauthorizedException("삭제 권한이 없습니다.");
+        }
         // 서비스에 토큰 전달하여 삭제 수행
-        scheduleService.deleteById(id, username);
+        scheduleService.deleteById(id, jwtToken);
         return ResponseEntity.noContent().build();
     }
     //5. 일정 수정
@@ -113,13 +120,16 @@ public class ScheduleController {
             @Valid @RequestBody ScheduleRequestDTO scheduleRequestDTO,
             @RequestHeader("Authorization") String token) {
 
+        // Bearer 접두어 제거
+        String jwtToken = token.replace("Bearer ", "").trim();
+
         // 1. 토큰 파싱 후 권한 확인
-        String role = jwtUtil.extractUserRole(token);
+        String role = jwtUtil.extractUserRole(jwtToken);
         if (!"ADMIN".equals(role)) {
             throw new UnauthorizedException("수정 권한이 없습니다.");
         }
         // Schedule 수정 요청
-        Schedule updatedSchedule = scheduleService.updateSchedule(id, scheduleRequestDTO);
+        Schedule updatedSchedule = scheduleService.updateSchedule(id, scheduleRequestDTO, jwtToken);
 
         return ResponseEntity.ok(updatedSchedule);
 

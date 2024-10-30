@@ -53,7 +53,7 @@ public class JwtUtil {
                         .claim("role", role) // 권한 정보 추가
                         .setExpiration(new Date(now.getTime() + TOKEN_TIME)) // 현재시간 + 만료 시간
                         .setIssuedAt(now) // 발급일
-                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                        .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘
                         .compact().trim(); //생성된 토큰의 공백 제거
     }
 
@@ -101,7 +101,7 @@ public class JwtUtil {
     public Claims getUserInfoFromToken(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(key)  // 비밀키 사용
+                    .setSigningKey(secretKey)  // 비밀키 사용
                     .parseClaimsJws(token)      // 토큰 파싱
                     .getBody();
         } catch (ExpiredJwtException e) {
@@ -134,18 +134,8 @@ public class JwtUtil {
                 .parseClaimsJws(jwtToken) // "Bearer " 제거 후 파싱
                 .getBody();
     }
-    // JWT에서 권한 추출
-    public String extractUserRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
-    }
 
-    // JWT 파싱 (클레임 추출)
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(key)
-                .parseClaimsJws(token.replace("Bearer ", "")) // "Bearer " 제거 후 파싱
-                .getBody();
-    }
+
 
     // HttpServletRequest에서 Cookie에 저장된 JWT 가져오기
     public String getTokenFromRequest(HttpServletRequest req) {

@@ -93,14 +93,27 @@ public class ScheduleService {
         }
     }
 
-    public Schedule updateSchedule(Long id, ScheduleRequestDTO scheduleRequestDTO) {
+    public Schedule updateSchedule(Long id, ScheduleRequestDTO scheduleRequestDTO, String jwtToken) {
         Schedule existingSchedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Schedule not found with id " + id));
 
         existingSchedule.setTitle(scheduleRequestDTO.getTitle());
         existingSchedule.setContent(scheduleRequestDTO.getContent());
+        try {
+            // 토큰에서 사용자 정보 가져오기
+            String username = jwtUtil.getUserInfoFromToken(jwtToken).getSubject();
 
-        return scheduleRepository.save(existingSchedule);
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with username " + username));
+
+            // 사용자 권한 확인
+            if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+                throw new AccessDeniedException("권한이 없습니다."); // 사용자 권한이 없을 경우 예외 처리
+            }
+            return scheduleRepository.save(existingSchedule);
+        } catch (AccessDeniedException e) {
+            throw new CustomAccessDeniedException("Access Denied: " + e.getMessage()); // 사용자 정의 예외 처리
+        }
     }
 
     public Page<ScheduleResponseDTO> findAllWithPaging(Pageable pageable) {
