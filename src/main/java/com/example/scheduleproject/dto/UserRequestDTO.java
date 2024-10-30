@@ -1,5 +1,6 @@
 package com.example.scheduleproject.dto;
 
+import com.example.scheduleproject.entity.UserRoleEnum;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,8 +23,8 @@ public class UserRequestDTO {
     @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     @Email(message = "유효한 이메일 형식이 아닙니다.")
     private String email;
-
     private String password;
+    private UserRoleEnum role;
     @PastOrPresent(message = "작성일은 미래가 될 수 없습니다.")
     private LocalDateTime createdDate = LocalDateTime.now();
 

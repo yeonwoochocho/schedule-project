@@ -32,7 +32,11 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
 
         // 유저 생성 및 저장
-        User user = new User(userRequestDTO.getUsername(), userRequestDTO.getEmail(), encodedPassword);
+        User user = new User(
+                userRequestDTO.getUsername(),
+                userRequestDTO.getEmail(),
+                encodedPassword,
+                userRequestDTO.getRole());
         userRepository.save(user);
 
         // JWT 토큰 발급

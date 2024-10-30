@@ -50,10 +50,11 @@ public class User {
     }
 
     // 모든 필드를 초기화하는 생성자
-    public User(String username, String email,  String password) {
+    public User(String username, String email,  String password, UserRoleEnum role) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
 
     }
 

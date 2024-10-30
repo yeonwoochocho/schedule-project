@@ -50,11 +50,11 @@ public class JwtUtil {
         return BEARER_PREFIX +
                 Jwts.builder() // 암호화
                         .setSubject(username) // 사용자 식별자값(ID)
-                        .claim("role", role) // 권한 정보 추가 // 사용자 권한 추가
+                        .claim("role", role) // 권한 정보 추가
                         .setExpiration(new Date(now.getTime() + TOKEN_TIME)) // 현재시간 + 만료 시간
                         .setIssuedAt(now) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
-                        .compact();
+                        .compact().trim(); //생성된 토큰의 공백 제거
     }
 
     // JWT를 Cookie에 추가하는 메서드
@@ -104,9 +104,20 @@ public class JwtUtil {
                     .setSigningKey(key)  // 비밀키 사용
                     .parseClaimsJws(token)      // 토큰 파싱
                     .getBody();
+        } catch (ExpiredJwtException e) {
+            logger.error("Expired JWT token");
+            throw new IllegalArgumentException("Expired JWT token", e);
+        } catch (SignatureException e) {
+            logger.error("Invalid JWT signature");
+            throw new IllegalArgumentException("Invalid JWT signature", e);
+        } catch (MalformedJwtException e) {
+            logger.error("Malformed JWT token");
+            throw new IllegalArgumentException("Malformed JWT token", e);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid JWT token", e);  // 유효하지 않은 토큰 예외 처리
+            logger.error("Invalid JWT token");
+            throw new IllegalArgumentException("Invalid JWT token", e);
         }
+
     }
     // JWT에서 권한 추출
     public String extractUserRole(String token) {
@@ -116,9 +127,10 @@ public class JwtUtil {
     // JWT 파싱 (클레임 추출)
     private Claims extractAllClaims(String token) {
         // Bearer 부분을 제거 후 파싱
-        String jwtToken = token.replace("Bearer ", "");
-        return Jwts.parser()
+        String jwtToken = token.trim();  // 공백 제거
+        return Jwts.parserBuilder()
                 .setSigningKey(key)
+                .build()
                 .parseClaimsJws(jwtToken) // "Bearer " 제거 후 파싱
                 .getBody();
     }
@@ -142,7 +154,8 @@ public class JwtUtil {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
                     try {
-                        return URLDecoder.decode(cookie.getValue(), "UTF-8");
+                        String token = URLDecoder.decode(cookie.getValue(), "UTF-8").trim(); //공백 제거
+                        return substringToken(token);  // Bearer 제거 후 반환
                     } catch (UnsupportedEncodingException e) {
                         logger.error("Error decoding JWT: {}", e.getMessage());
                     }

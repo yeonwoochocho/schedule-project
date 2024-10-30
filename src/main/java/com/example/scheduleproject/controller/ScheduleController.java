@@ -94,8 +94,16 @@ public class ScheduleController {
         // Bearer 접두어 제거
         String jwtToken = token.replace("Bearer ", "").trim();
 
+        // 토큰 검증
+        if (!jwtUtil.validateToken(jwtToken)) {
+            throw new IllegalArgumentException("Invalid JWT token.");
+        }
+
+        // 사용자 정보 확인
+       String username = jwtUtil.extractUsername(jwtToken);
+
         // 서비스에 토큰 전달하여 삭제 수행
-        scheduleService.deleteById(id, token);
+        scheduleService.deleteById(id, username);
         return ResponseEntity.noContent().build();
     }
     //5. 일정 수정
