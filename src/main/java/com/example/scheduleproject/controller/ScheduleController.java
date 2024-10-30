@@ -6,6 +6,7 @@ import com.example.scheduleproject.entity.Comment;
 import com.example.scheduleproject.entity.Schedule;
 import com.example.scheduleproject.entity.User;
 import com.example.scheduleproject.exception.CustomAccessDeniedException;
+import com.example.scheduleproject.exception.ForbiddenException;
 import com.example.scheduleproject.exception.ResourceNotFoundException;
 import com.example.scheduleproject.exception.UnauthorizedException;
 import com.example.scheduleproject.jwt.JwtUtil;
@@ -107,7 +108,7 @@ public class ScheduleController {
         //  토큰 파싱 후 권한 확인
         String role = jwtUtil.extractUserRole(jwtToken);
         if (!"ADMIN".equals(role)) {
-            throw new UnauthorizedException("삭제 권한이 없습니다.");
+            throw new ForbiddenException("삭제 권한이 없습니다.");
         }
         // 서비스에 토큰 전달하여 삭제 수행
         scheduleService.deleteById(id, jwtToken);
@@ -126,7 +127,7 @@ public class ScheduleController {
         // 1. 토큰 파싱 후 권한 확인
         String role = jwtUtil.extractUserRole(jwtToken);
         if (!"ADMIN".equals(role)) {
-            throw new UnauthorizedException("수정 권한이 없습니다.");
+            throw new ForbiddenException("수정 권한이 없습니다.");
         }
         // Schedule 수정 요청
         Schedule updatedSchedule = scheduleService.updateSchedule(id, scheduleRequestDTO, jwtToken);
