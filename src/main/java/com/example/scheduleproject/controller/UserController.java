@@ -22,8 +22,9 @@ public class UserController {
 
     //1. 유저 생성 (회원 가입)
     @PostMapping("/signup")
-    public UserResponseDTO signup(@RequestBody UserRequestDTO userRequestDTO) {
-        return userService.createUser(userRequestDTO);
+    public ResponseEntity<UserResponseDTO> signup(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+        UserResponseDTO createdUser = userService.createUser(userRequestDTO);
+        return ResponseEntity.status(201).body(createdUser); // 201 Created 반환
     }
 
 
@@ -33,21 +34,27 @@ public class UserController {
         String token = userService.login(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
         return ResponseEntity.ok(token);
     }
+
     //2. 유저 전체 조회
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users); // 200 OK 반환
     }
 
     // 3. 특정 유저 조회
     @GetMapping("/{id}")
-    public User getById(@PathVariable Long id) {
-        return userService.findById(id);
+    public ResponseEntity<User> getById(@PathVariable Long id) {
+        User user = userService.findById(id);
+        return ResponseEntity.ok(user); // 200 OK 반환
+
     }
 
     // 4. 유저 삭제
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.deleteById(id);
+        return ResponseEntity.noContent().build(); // 204 No Content 반환
+
     }
 }

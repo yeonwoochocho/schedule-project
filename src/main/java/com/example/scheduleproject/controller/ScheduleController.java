@@ -42,7 +42,7 @@ public class ScheduleController {
 
     // 1. 일정 생성
     @PostMapping
-    public Schedule createSchedule( @RequestBody ScheduleRequestDTO scheduleRequestDTO,
+    public ResponseEntity<Schedule> createSchedule( @RequestBody ScheduleRequestDTO scheduleRequestDTO,
                                     @RequestHeader("Authorization") String token) {
         // "Bearer " 부분 제거
         if (token.startsWith("Bearer ")) {
@@ -64,23 +64,28 @@ public class ScheduleController {
         schedule.setAuthor(author); // User 객체 설정
 
         // 일정 저장
-        return scheduleRepository.save(schedule);
+        Schedule savedSchedule = scheduleRepository.save(schedule);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedSchedule);
     }
 
 
     // 2. 전체 일정 조회 (페이징 X)
     @GetMapping
-    public List<Schedule> getAll() {
-        return scheduleService.findAll();
+    public ResponseEntity<List<Schedule>> getAll() {
+        List<Schedule> schedules = scheduleService.findAll();
+        return ResponseEntity.ok(schedules);
     }
 
     // 3. 페이징된 일정 조회
     @GetMapping("/paged")
-    public Page<Schedule> getPagedSchedules(
+    public ResponseEntity<Page<Schedule>> getPagedSchedules(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("modifiedDate").descending());
-        return scheduleService.findAll(pageable);
+        Page<Schedule> pagedSchedules = scheduleService.findAll(pageable);
+
+        return ResponseEntity.ok(pagedSchedules);
     }
 
     // 4. 일정 삭제
