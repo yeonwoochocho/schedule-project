@@ -23,7 +23,7 @@ public class CommentService {
     public CommentService(CommentRepository commentRepository, ScheduleRepository scheduleRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.scheduleRepository = scheduleRepository;
-        this.userRepository = userRepository; // 초기화
+        this.userRepository = userRepository;
     }
 
     @Transactional

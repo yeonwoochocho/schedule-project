@@ -1,17 +1,13 @@
 package com.example.scheduleproject.entity;
 
 public enum UserRoleEnum {
-    USER(Authority.USER),  // 사용자 권한
-    ADMIN(Authority.ADMIN);  // 관리자 권한
+    USER(Authority.USER),
+    ADMIN(Authority.ADMIN);
 
     private final String authority;
 
     UserRoleEnum(String authority) {
         this.authority = authority;
-    }
-
-    public String getAuthority() {
-        return this.authority;
     }
 
     public static class Authority {

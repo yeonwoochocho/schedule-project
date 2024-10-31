@@ -43,13 +43,13 @@ public class ScheduleService {
         LocalDateTime modifiedDate = requestDTO.getModifiedDate() != null ? requestDTO.getModifiedDate() : now;
 
         User author = new User();
-        author.setUsername(requestDTO.getAuthor()); // 작성자 설정
-        userRepository.save(author); // User 엔티티 저장
+        author.setUsername(requestDTO.getAuthor());
+        userRepository.save(author);
 
         Schedule schedule = new Schedule(
                 requestDTO.getTitle(),
                 requestDTO.getContent(),
-                author, // User 객체로 전달
+                author,
                 createdDate,
                 modifiedDate
         );

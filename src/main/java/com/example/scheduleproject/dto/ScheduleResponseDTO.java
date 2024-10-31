@@ -16,5 +16,5 @@ public class ScheduleResponseDTO {
     private Long commentCount;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
-    private String username; // 유저명
+    private String username;
 }

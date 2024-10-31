@@ -2,7 +2,6 @@ package com.example.scheduleproject.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,7 +30,7 @@ public class Schedule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User author; // User 고유 식별자
+    private User author;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -42,17 +41,17 @@ public class Schedule {
     private List<User> responsibleUsers = new ArrayList<>(); // 일정 담당 유저들
 
 
-    // 엔티티가 생성될 때 자동으로 현재 시간 설정
+
     @Column(updatable = false)
     private LocalDateTime createdDate;
 
-    // 엔티티가 수정될 때 자동으로 시간 갱신
+
     private LocalDateTime modifiedDate;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    // 모든 필드를 초기화하는 생성자
+
     public Schedule(String title, String content, User author, LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.title = title;
         this.content = content;

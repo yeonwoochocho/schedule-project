@@ -13,16 +13,10 @@ public class UserResponseDTO {
         this.token = token;
     }
 
-    // Getters
+
     public String getUsername() {
         return username;
     }
 
-    public String getEmail() {
-        return email;
-    }
 
-    public String getToken() {
-        return token;
-    }
 }

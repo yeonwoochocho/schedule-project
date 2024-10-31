@@ -2,7 +2,6 @@ package com.example.scheduleproject.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -30,9 +29,9 @@ public class User {
     private String email;
 
     @NotBlank(message = "비밀번호는 비어있을 수 없습니다.")
-    private String password; // 암호화된 비밀번호
+    private String password;
 
-    @Enumerated(EnumType.STRING) // 역할을 문자열로 저장
+    @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
     @CreatedDate
