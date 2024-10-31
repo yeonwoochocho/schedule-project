@@ -28,14 +28,14 @@ public class CommentService {
 
     @Transactional
     public Comment saveComment(Long scheduleId, CommentRequestDTO requestDTO) {
-        // 일정 확인
+
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 일정이 존재하지 않습니다. ID: " + scheduleId));
 
-        // 작성자 이름으로 User 조회
+
         User author = userRepository.findByUsername(requestDTO.getAuthor())
                 .orElseThrow(() -> new ResourceNotFoundException("작성자가 존재하지 않습니다. 이름: " + requestDTO.getAuthor()));
-        // 댓글 저장
+        
         Comment comment = new Comment();
         comment.setAuthor(author);
         comment.setContent(requestDTO.getContent());

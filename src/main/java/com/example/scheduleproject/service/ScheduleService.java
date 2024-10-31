@@ -3,17 +3,14 @@ package com.example.scheduleproject.service;
 import com.example.scheduleproject.dto.ScheduleRequestDTO;
 import com.example.scheduleproject.dto.ScheduleResponseDTO;
 import com.example.scheduleproject.entity.Schedule;
-import com.example.scheduleproject.exception.CustomAccessDeniedException;
-import com.example.scheduleproject.jwt.JwtUtil;
 import com.example.scheduleproject.entity.User;
 import com.example.scheduleproject.entity.UserRoleEnum;
+import com.example.scheduleproject.exception.CustomAccessDeniedException;
 import com.example.scheduleproject.exception.ResourceNotFoundException;
-import com.example.scheduleproject.repository.ScheduleRepository;
+import com.example.scheduleproject.jwt.JwtUtil;
 import com.example.scheduleproject.repository.CommentRepository;
+import com.example.scheduleproject.repository.ScheduleRepository;
 import com.example.scheduleproject.repository.UserRepository;
-
-
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -75,18 +72,18 @@ public class ScheduleService {
     @Transactional
     public void deleteById(Long id, String token) {
         try {
-            // 토큰에서 사용자 정보 가져오기
+
             String username = jwtUtil.getUserInfoFromToken(token).getSubject();
 
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new ResourceNotFoundException("User not found with username " + username));
 
-            // 사용자 권한 확인
+
             if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
                 throw new AccessDeniedException("권한이 없습니다."); // 사용자 권한이 없을 경우 예외 처리
             }
 
-            // 스케줄 삭제 로직
+
             scheduleRepository.deleteById(id);
         } catch (AccessDeniedException e) {
             throw new CustomAccessDeniedException("Access Denied: " + e.getMessage()); // 사용자 정의 예외 처리
@@ -100,13 +97,13 @@ public class ScheduleService {
         existingSchedule.setTitle(scheduleRequestDTO.getTitle());
         existingSchedule.setContent(scheduleRequestDTO.getContent());
         try {
-            // 토큰에서 사용자 정보 가져오기
+
             String username = jwtUtil.getUserInfoFromToken(jwtToken).getSubject();
 
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new ResourceNotFoundException("User not found with username " + username));
 
-            // 사용자 권한 확인
+
             if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
                 throw new AccessDeniedException("권한이 없습니다."); // 사용자 권한이 없을 경우 예외 처리
             }

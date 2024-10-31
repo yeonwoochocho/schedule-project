@@ -20,8 +20,6 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
-import static javax.crypto.Cipher.SECRET_KEY;
-
 @Component
 public class JwtUtil {
 
@@ -43,7 +41,7 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // JWT 생성 메서드
+
     public String createToken(String username, UserRoleEnum role) {
         Date now = new Date();
 
@@ -57,7 +55,7 @@ public class JwtUtil {
                         .compact().trim(); //생성된 토큰의 공백 제거
     }
 
-    // JWT를 Cookie에 추가하는 메서드
+
     public void addJwtToCookie(String token, HttpServletResponse res) {
         try {
             token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
@@ -71,7 +69,7 @@ public class JwtUtil {
         }
     }
 
-    // JWT에서 Bearer Prefix 제거
+
     public String substringToken(String tokenValue) {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(BEARER_PREFIX.length());
@@ -80,7 +78,7 @@ public class JwtUtil {
         throw new IllegalArgumentException("Invalid Token format");
     }
 
-    // JWT 검증 메서드
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -97,12 +95,12 @@ public class JwtUtil {
         return false;
     }
 
-    // JWT에서 사용자 정보 추출
+
     public Claims getUserInfoFromToken(String token) {
         try {
             return Jwts.parser()
                     .setSigningKey(secretKey)  // 비밀키 사용
-                    .parseClaimsJws(token)      // 토큰 파싱
+                    .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
             logger.error("Expired JWT token");
@@ -119,14 +117,14 @@ public class JwtUtil {
         }
 
     }
-    // JWT에서 권한 추출
+
     public String extractUserRole(String token) {
         return extractAllClaims(token).get("role", String.class);
     }
 
     // JWT 파싱 (클레임 추출)
     private Claims extractAllClaims(String token) {
-        // Bearer 부분을 제거 후 파싱
+
         String jwtToken = token.trim();  // 공백 제거
         return Jwts.parserBuilder()
                 .setSigningKey(key)
