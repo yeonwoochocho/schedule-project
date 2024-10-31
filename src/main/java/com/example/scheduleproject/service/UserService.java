@@ -4,6 +4,7 @@ import com.example.scheduleproject.config.PasswordEncoder;
 import com.example.scheduleproject.dto.UserRequestDTO;
 import com.example.scheduleproject.dto.UserResponseDTO;
 import com.example.scheduleproject.entity.User;
+import com.example.scheduleproject.exception.InvalidRequestException;
 import com.example.scheduleproject.exception.ResourceNotFoundException;
 import com.example.scheduleproject.jwt.JwtUtil;
 import com.example.scheduleproject.repository.UserRepository;
@@ -28,6 +29,10 @@ public class UserService {
     //회원 가입
 
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+        // 이메일 중복 확인
+        if (userRepository.existsByEmail(userRequestDTO.getEmail())) {
+            throw new InvalidRequestException("이미 존재하는 이메일입니다.");
+        }
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
 
