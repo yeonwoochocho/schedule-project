@@ -3,6 +3,7 @@
 일정 등록, 수정, 삭제할 수 있는 일정 관리 앱 구현, 회원가입과 로그인기능 구현
 ## 개발 기간
 2024.10.15 ~ 2024.10.17
+2024.10.30 ~ 2024.10.31
 ## 개발 환경
 - spring boot 3.3.4
 - IntelliJ
@@ -29,3 +30,7 @@
 <img width="605" alt="스크린샷 2024-10-16 오후 4 29 47" src="https://github.com/user-attachments/assets/00fa3508-fb15-4cb5-827e-e998fdca1b5a">
 <img width="602" alt="스크린샷 2024-10-16 오후 3 40 24" src="https://github.com/user-attachments/assets/c5bd090a-1b34-4ec0-9226-c0bc3f09b67b">
 <img width="585" alt="스크린샷 2024-10-16 오후 3 29 18" src="https://github.com/user-attachments/assets/3ebf3637-c05c-4c4b-bd6f-bb29aca57fab">
+
+- 중복된 이메일로 회원가입 요청할 때
+<img width="1440" alt="스크린샷 2024-10-31 오전 10 52 36" src="https://github.com/user-attachments/assets/5d565c0a-9265-42ea-afc5-b2fc070ecb5b">
+
